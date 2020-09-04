@@ -46,10 +46,10 @@ def create_pdf_report(ulog: ULog, output_plot_filename: str) -> None:
         raise PreconditionError('could not find innovation data')
 
     try:
-        sensor_preflight_imu = ulog.get_dataset('sensor_preflight_imu').data
+        sensors_imu_status = ulog.get_dataset('sensors_imu_status').data
         print('found sensor_preflight data')
     except:
-        raise PreconditionError('could not find sensor_preflight_imu data')
+        raise PreconditionError('could not find sensors_imu_status data')
 
     control_mode, innov_flags, gps_fail_flags = get_estimator_check_flags(estimator_status)
 
@@ -61,10 +61,10 @@ def create_pdf_report(ulog: ULog, output_plot_filename: str) -> None:
     with PdfPages(output_plot_filename) as pdf_pages:
 
         # plot IMU consistency data
-        if ('accel_inconsistency_m_s_s' in sensor_preflight_imu.keys()) and (
-                'gyro_inconsistency_rad_s' in sensor_preflight_imu.keys()):
+        if ('accel_inconsistency_m_s_s' in sensors_imu_status.keys()) and (
+                'gyro_inconsistency_rad_s' in sensors_imu_status.keys()):
             data_plot = TimeSeriesPlot(
-                sensor_preflight_imu, [['accel_inconsistency_m_s_s'], ['gyro_inconsistency_rad_s']],
+                sensors_imu_status, [['accel_inconsistency_m_s_s[0]'], ['gyro_inconsistency_rad_s[0]']],
                 x_labels=['data index', 'data index'],
                 y_labels=['acceleration (m/s/s)', 'angular rate (rad/s)'],
                 plot_title='IMU Consistency Check Levels', pdf_handle=pdf_pages)
